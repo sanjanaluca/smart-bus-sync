@@ -7,3 +7,43 @@ CREATE TABLE route (
     starting_point VARCHAR(100) NOT NULL,
     destination VARCHAR(100) NOT NULL
 );
+CREATE TABLE bus (
+    bus_number VARCHAR(20) PRIMARY KEY,
+    capacity INTEGER NOT NULL,
+    driver_name VARCHAR(100) NOT NULL,
+    driver_phone VARCHAR(15) NOT NULL,
+    incharge_name VARCHAR(100) NOT NULL,
+    incharge_phone VARCHAR(15) NOT NULL,
+    gps_device_id VARCHAR(50) UNIQUE NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    route_id INTEGER NOT NULL,
+    FOREIGN KEY (route_id) REFERENCES route(route_id)
+);
+CREATE TABLE bus_stop (
+    stop_id INTEGER PRIMARY KEY,
+    stop_name VARCHAR(100) NOT NULL,
+    stop_order INTEGER NOT NULL,
+    route_id INTEGER NOT NULL,
+    FOREIGN KEY (route_id) REFERENCES route(route_id)
+);
+CREATE TABLE student (
+    id_number VARCHAR(20) PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    college_name VARCHAR(100) NOT NULL,
+    department VARCHAR(50) NOT NULL,
+    year INTEGER NOT NULL,
+    rfid_card_number VARCHAR(50) UNIQUE NOT NULL,
+    bus_number VARCHAR(20) NOT NULL,
+    stop_id INTEGER NOT NULL,
+
+    FOREIGN KEY (bus_number) REFERENCES bus(bus_number),
+    FOREIGN KEY (stop_id) REFERENCES bus_stop(stop_id)
+);
+CREATE TABLE student_status (
+    status_id INTEGER PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    status_date DATE NOT NULL,
+
+    FOREIGN KEY (student_id) REFERENCES student(id_number)
+);
