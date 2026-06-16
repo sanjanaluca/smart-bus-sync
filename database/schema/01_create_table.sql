@@ -42,10 +42,14 @@ CREATE TABLE student (
 CREATE TABLE student_status (
     status_id INTEGER PRIMARY KEY,
     student_id VARCHAR(20) NOT NULL,
+    bus_number VARCHAR(20) NOT NULL,
+    stop_id INTEGER NOT NULL,
     status VARCHAR(20) NOT NULL,
     status_date DATE NOT NULL,
 
-    FOREIGN KEY (student_id) REFERENCES student(id_number)
+    FOREIGN KEY (student_id) REFERENCES student(id_number),
+    FOREIGN KEY (bus_number) REFERENCES bus(bus_number),
+    FOREIGN KEY (stop_id) REFERENCES bus_stop(stop_id)
 );
 CREATE TABLE rfid_attendance (
     attendance_id INTEGER PRIMARY KEY,
