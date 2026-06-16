@@ -47,3 +47,25 @@ CREATE TABLE student_status (
 
     FOREIGN KEY (student_id) REFERENCES student(id_number)
 );
+CREATE TABLE rfid_attendance (
+    attendance_id INTEGER PRIMARY KEY,
+    student_id VARCHAR(20) NOT NULL,
+    bus_number VARCHAR(20) NOT NULL,
+    stop_id INTEGER NOT NULL,
+    attendance_type VARCHAR(20) NOT NULL,
+    scan_time TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (student_id) REFERENCES student(id_number),
+    FOREIGN KEY (bus_number) REFERENCES bus(bus_number),
+    FOREIGN KEY (stop_id) REFERENCES bus_stop(stop_id)
+);
+CREATE TABLE gps_tracking (
+    tracking_id INTEGER PRIMARY KEY,
+    bus_number VARCHAR(20) NOT NULL,
+    latitude DECIMAL(10,6) NOT NULL,
+    longitude DECIMAL(10,6) NOT NULL,
+    recorded_at TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (bus_number) REFERENCES bus(bus_number)
+);
+
