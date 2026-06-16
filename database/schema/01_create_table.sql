@@ -73,3 +73,32 @@ CREATE TABLE gps_tracking (
     FOREIGN KEY (bus_number) REFERENCES bus(bus_number)
 );
 
+CREATE TABLE stop_alert (
+    alert_id INTEGER PRIMARY KEY,
+    bus_number VARCHAR(20) NOT NULL,
+    stop_id INTEGER NOT NULL,
+    alert_distance INTEGER NOT NULL,
+    alert_type VARCHAR(20) NOT NULL,
+
+    FOREIGN KEY (bus_number) REFERENCES bus(bus_number),
+    FOREIGN KEY (stop_id) REFERENCES bus_stop(stop_id)
+);
+CREATE TABLE bus_strength (
+    strength_id INTEGER PRIMARY KEY,
+    bus_number VARCHAR(20) NOT NULL,
+    strength_count INTEGER NOT NULL,
+    calculation_date DATE NOT NULL,
+
+    FOREIGN KEY (bus_number) REFERENCES bus(bus_number)
+);
+CREATE TABLE bus_merge_recommendation (
+    recommendation_id INTEGER PRIMARY KEY,
+    primary_bus VARCHAR(20) NOT NULL,
+    merged_bus VARCHAR(20) NOT NULL,
+    total_students INTEGER NOT NULL,
+    recommendation_date DATE NOT NULL,
+
+    FOREIGN KEY (primary_bus) REFERENCES bus(bus_number),
+    FOREIGN KEY (merged_bus) REFERENCES bus(bus_number)
+);
+o
