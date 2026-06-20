@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Bus Sync</title>
+</head>
+<body>
+
+    <h1>Student Search</h1>
+
+    <form method="POST">
+        <label>Student ID:</label>
+        <input type="text" name="student_id" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% if student %}
+        <h3>Student Details</h3>
+
+        <p><strong>ID:</strong> {{ student[0] }}</p>
+        <p><strong>Name:</strong> {{ student[1] }}</p>
+        <p><strong>College:</strong> {{ student[2] }}</p>
+        <p><strong>Department:</strong> {{ student[3] }}</p>
+        <p><strong>Year:</strong> {{ student[4] }}</p>
+        <p><strong>Bus:</strong> {{ student[5] }}</p>
+        <p><strong>Stop:</strong> {{ student[6] }}</p>
+    {% endif %}
+
+</body>
+</html>
