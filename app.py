@@ -50,22 +50,61 @@ def home():
             cur = conn.cursor()
 
             cur.execute("""
-                INSERT INTO student_status
-                (student_id, status, status_date)
-                VALUES (%s, %s, %s)
-            """, (student_id, status, date.today()))
+                SELECT *
+                FROM student_status
+                WHERE student_id = %s
+                AND status_date = %s
+            """, (student_id, date.today()))
 
-            conn.commit()
+            existing_status = cur.fetchone()
+
+            if existing_status:
+
+                message = "Status already submitted today"
+
+            else:
+
+                cur.execute("""
+                    INSERT INTO student_status
+                    (student_id, status, status_date)
+                    VALUES (%s, %s, %s)
+                """, (student_id, status, date.today()))
+
+                conn.commit()
+
+                message = "Status saved successfully"
 
             cur.close()
             conn.close()
-
-            message = "Status saved successfully"
 
     return render_template(
         'index.html',
         student=student,
         message=message
+    )
+@app.route('/history')
+def history():
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            student_id,
+            status,
+            status_date
+        FROM student_status
+        ORDER BY status_date
+    """)
+
+    history = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        'history.html',
+        history=history
     )
 
 if __name__ == '__main__':
