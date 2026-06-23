@@ -106,6 +106,30 @@ def history():
         'history.html',
         history=history
     )
+@app.route('/dashboard')
+def dashboard():
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            bus_number,
+            strength_count,
+            calculation_date
+        FROM bus_strength
+        ORDER BY bus_number
+    """)
+
+    dashboard = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        'dashboard.html',
+        dashboard=dashboard
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
