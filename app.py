@@ -130,6 +130,30 @@ def dashboard():
         'dashboard.html',
         dashboard=dashboard
     )
+@app.route('/recommendation')
+def recommendation():
 
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            primary_bus,
+            merged_bus,
+            total_students,
+            recommendation_date
+        FROM bus_merge_recommendation
+        ORDER BY recommendation_date DESC
+    """)
+
+    recommendations = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        'recommendation.html',
+        recommendations=recommendations
+    )
 if __name__ == '__main__':
     app.run(debug=True)
