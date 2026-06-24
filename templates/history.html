@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Status History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
@@ -23,6 +24,13 @@
     {% endfor %}
 
 </table>
+<nav>
+    <a href="/">Home</a>
+    <a href="/history">History</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/recommendation">Recommendation</a>
+</nav>
 
+<br>
 </body>
 </html>

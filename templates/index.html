@@ -2,9 +2,10 @@
 <html>
 <head>
     <title>Smart Bus Sync</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-
+    <div class="container">
     <h1>Student Search</h1>
 
     <form method="POST">
@@ -45,9 +46,16 @@
     </form>
 
     {% if message %}
-        <h3>{{ message }}</h3>
+        <p class="message">{{ message }}</p>
     {% endif %}
+    <nav>
+    <a href="/">Home</a>
+    <a href="/history">History</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/recommendation">Recommendation</a>
+    </nav
 
+<br>
 </body>
 </html>
 
