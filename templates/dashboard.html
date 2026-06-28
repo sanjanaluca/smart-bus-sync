@@ -1,28 +1,127 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
     <title>Bus Dashboard</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+    body{
+        font-family: Arial, sans-serif;
+        background:#f4f6f9;
+        margin:0;
+        padding:0;
+    }
+
+    .navbar{
+        background:#2c3e50;
+        padding:15px;
+    }
+
+    .navbar a{
+        color:white;
+        text-decoration:none;
+        margin-right:25px;
+        font-weight:bold;
+    }
+
+    .navbar a:hover{
+        color:#3498db;
+    }
+
+    .container{
+        width:80%;
+        margin:30px auto;
+        background:white;
+        padding:25px;
+        border-radius:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1{
+        color:#2c3e50;
+    }
+
+    input[type=text]{
+        width:300px;
+        padding:10px;
+        border:1px solid #ccc;
+        border-radius:5px;
+    }
+
+    button{
+        background:#3498db;
+        color:white;
+        border:none;
+        padding:10px 20px;
+        border-radius:5px;
+        cursor:pointer;
+    }
+
+    button:hover{
+        background:#2980b9;
+    }
+
+    .result-box{
+        margin-top:25px;
+        padding:20px;
+        border:1px solid #ddd;
+        border-radius:5px;
+        background:#fafafa;
+    }
+
+    .result-box p{
+        font-size:18px;
+    }
+
+</style>
+
 </head>
+
 <body>
 
-    <h1>Smart Bus Sync Dashboard</h1>
-    <h2>Today's Bus Strength Report</h2>
-    <table border="1">
-        <tr>
-            <th>Bus Number</th>
-            <th>Students Present</th>
-            <th>Calculation Date</th>
-        </tr>
+<div class="navbar">
+    <a href="/">Home</a>
+    <a href="/history">Attendance</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/recommendation">Recommendation</a>
+</div>
 
-        {% for row in dashboard %}
-        <tr>
-            <td>{{ row[0] }}</td>
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}</td>
-        </tr>
-        {% endfor %}
+<div class="container">
 
-    </table>
+<h1>Bus Dashboard</h1>
+
+<form method="POST">
+
+    <input
+        type="text"
+        name="bus_number"
+        placeholder="Enter Bus Number"
+        required>
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+{% if bus_number %}
+
+<div class="result-box">
+
+    <p><strong>Bus Number :</strong> {{ bus_number }}</p>
+
+    <p><strong>Today's Strength :</strong> {{ strength }}</p>
+
+</div>
+
+{% endif %}
+
+</div>
 
 </body>
 </html>

@@ -4,6 +4,8 @@ from datetime import date
 
 app = Flask(__name__)
 
+# ---------------- HOME ----------------
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
 
@@ -59,7 +61,6 @@ def home():
             existing_status = cur.fetchone()
 
             if existing_status:
-
                 message = "Status already submitted today"
 
             else:
@@ -71,7 +72,6 @@ def home():
                 """, (student_id, status, date.today()))
 
                 conn.commit()
-
                 message = "Status saved successfully"
 
             cur.close()
@@ -82,78 +82,233 @@ def home():
         student=student,
         message=message
     )
-@app.route('/history')
+
+# ---------------- ATTENDANCE ----------------
+
+@app.route('/history', methods=['GET', 'POST'])
 def history():
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+    history = []
 
-    cur.execute("""
-        SELECT
-            student_id,
-            status,
-            status_date
-        FROM student_status
-        ORDER BY status_date
-    """)
+    if request.method == 'POST':
 
-    history = cur.fetchall()
+        bus_number = request.form['bus_number']
 
-    cur.close()
-    conn.close()
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT
+                s.id_number,
+                s.student_name,
+                s.college_name,
+                s.department,
+                s.year,
+                s.bus_number,
+                ss.status,
+                ss.status_date
+            FROM student_status ss
+            JOIN student s
+            ON ss.student_id = s.id_number
+            WHERE s.bus_number = %s
+            AND ss.status_date = CURRENT_DATE
+            ORDER BY s.student_name
+        """, (bus_number,))
+
+        history = cur.fetchall()
+
+        cur.close()
+        conn.close()
 
     return render_template(
         'history.html',
         history=history
     )
-@app.route('/dashboard')
+
+# ---------------- DASHBOARD ----------------
+
+@app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+    strength = None
+    bus_number = None
 
-    cur.execute("""
-        SELECT
-            bus_number,
-            strength_count,
-            calculation_date
-        FROM bus_strength
-        ORDER BY bus_number
-    """)
+    if request.method == 'POST':
 
-    dashboard = cur.fetchall()
+        bus_number = request.form['bus_number']
 
-    cur.close()
-    conn.close()
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT COUNT(*)
+            FROM student_status ss
+            JOIN student s
+            ON ss.student_id = s.id_number
+            WHERE s.bus_number = %s
+            AND ss.status = 'Present'
+            AND ss.status_date = CURRENT_DATE
+        """, (bus_number,))
+
+        strength = cur.fetchone()[0]
+
+        cur.close()
+        conn.close()
 
     return render_template(
         'dashboard.html',
-        dashboard=dashboard
+        bus_number=bus_number,
+        strength=strength
     )
-@app.route('/recommendation')
+
+# ---------------- RECOMMENDATION ----------------
+
+@app.route('/recommendation', methods=['GET', 'POST'])
 def recommendation():
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+    buses = []
+    recommendation = {}
+    transfer_plan = []
+    final_strength = []
 
-    cur.execute("""
-        SELECT
-            primary_bus,
-            merged_bus,
-            total_students,
-            recommendation_date
-        FROM bus_merge_recommendation
-        ORDER BY recommendation_date DESC
-    """)
+    if request.method == "POST":
 
-    recommendations = cur.fetchall()
+        common_stop_id = request.form["common_stop_id"]
 
-    cur.close()
-    conn.close()
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT bus_number
+            FROM bus_common_stop
+            WHERE common_stop_id = %s
+            ORDER BY bus_number
+        """, (common_stop_id,))
+
+        bus_list = cur.fetchall()
+
+        total_strength = 0
+
+        cur.execute("""
+            SELECT total_capacity
+            FROM bus_capacity
+            LIMIT 1
+        """)
+
+        bus_capacity = cur.fetchone()[0]
+
+        for bus in bus_list:
+
+            bus_number = bus[0]
+
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM student_status ss
+                JOIN student s
+                ON ss.student_id = s.id_number
+                WHERE s.bus_number = %s
+                AND ss.status = 'Present'
+                AND ss.status_date = CURRENT_DATE
+            """, (bus_number,))
+
+            strength = cur.fetchone()[0]
+
+            buses.append({
+                "bus_number": bus_number,
+                "strength": strength
+            })
+
+            total_strength += strength
+
+        # CASE 1 - Merge All Buses
+
+        if total_strength <= bus_capacity:
+
+            strongest_bus = max(buses, key=lambda x: x["strength"])
+
+            recommendation["type"] = "Merge All"
+            recommendation["primary_bus"] = strongest_bus["bus_number"]
+
+            for bus in buses:
+
+                if bus["bus_number"] != strongest_bus["bus_number"]:
+
+                    transfer_plan.append({
+                        "from_bus": bus["bus_number"],
+                        "to_bus": strongest_bus["bus_number"],
+                        "students": bus["strength"]
+                    })
+
+            final_strength.append({
+                "bus_number": strongest_bus["bus_number"],
+                "strength": total_strength
+            })
+
+        # CASE 2 - Split Weak Bus
+
+        else:
+
+            weak_bus = None
+
+            for bus in buses:
+
+                if bus["strength"] < 7:
+                    weak_bus = bus
+                    break
+
+            if weak_bus:
+
+                recommendation["type"] = "Split Bus"
+                recommendation["primary_bus"] = weak_bus["bus_number"]
+
+                receivers = []
+
+                for bus in buses:
+
+                    if bus["bus_number"] != weak_bus["bus_number"]:
+                        receivers.append(bus)
+
+                students = weak_bus["strength"]
+                i = 0
+
+                while students > 0:
+
+                    receivers[i]["strength"] += 1
+
+                    transfer_plan.append({
+                        "from_bus": weak_bus["bus_number"],
+                        "to_bus": receivers[i]["bus_number"],
+                        "students": 1
+                    })
+
+                    students -= 1
+                    i = (i + 1) % len(receivers)
+
+                for bus in receivers:
+
+                    final_strength.append({
+                        "bus_number": bus["bus_number"],
+                        "strength": bus["strength"]
+                    })
+
+            else:
+
+                recommendation["type"] = "No Merge Required"
+
+        cur.close()
+        conn.close()
 
     return render_template(
-        'recommendation.html',
-        recommendations=recommendations
+        "recommendation.html",
+        buses=buses,
+        recommendation=recommendation,
+        transfer_plan=transfer_plan,
+        final_strength=final_strength,
+        total_strength=total_strength if request.method == "POST" else None,
+        bus_capacity=bus_capacity if request.method == "POST" else None
     )
+
+# ---------------- MAIN ----------------
+
 if __name__ == '__main__':
     app.run(debug=True)

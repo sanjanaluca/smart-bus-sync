@@ -1,31 +1,230 @@
+```html
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Bus Recommendations</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>Bus Merge Recommendation</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
+
 <body>
 
-<h1>Bus Merge Recommendations</h1>
+<div class="navbar">
 
-<table border="1">
-    <tr>
-        <th>Primary Bus</th>
-        <th>Merged Bus</th>
-        <th>Total Students</th>
-        <th>Date</th>
-    </tr>
+    <a href="/">Home</a>
+    <a href="/history">Attendance</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/recommendation">Recommendation</a>
 
-    {% for row in recommendations %}
-    <tr>
-        <td>{{ row[0] }}</td>
-        <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</td>
-        <td>{{ row[3] }}</td>
-    </tr>
-    {% endfor %}
+</div>
 
-</table>
+<div class="container">
+
+    <h1>Bus Merge Recommendation</h1>
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="common_stop_id"
+            placeholder="Enter Common Stop ID"
+            required>
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+    {% if buses %}
+
+    <div class="result-box">
+
+        <h2>Common Stop ID : {{ request.form['common_stop_id'] }}</h2>
+
+        <hr>
+
+        <h3>Today's Bus Strength</h3>
+
+        {% for bus in buses %}
+
+        <div class="student-card">
+
+            <p><strong>Bus Number :</strong> {{ bus.bus_number }}</p>
+
+            <p><strong>Present Strength :</strong> {{ bus.strength }}</p>
+
+        </div>
+
+        {% endfor %}
+
+        <hr>
+
+        <div class="student-card">
+
+            <p><strong>Total Strength :</strong> {{ total_strength }}</p>
+
+            <p><strong>Bus Capacity :</strong> {{ bus_capacity }}</p>
+
+        </div>
+
+        <hr>
+
+        {% if recommendation.type == "Merge All" %}
+
+        <h3>Recommendation</h3>
+
+        <div class="student-card">
+
+            <p><strong>Action :</strong> Merge All Buses</p>
+
+            <p><strong>Primary Bus :</strong> {{ recommendation.primary_bus }}</p>
+
+        </div>
+
+        <h3>Transfer Plan</h3>
+
+        {% for transfer in transfer_plan %}
+
+        <div class="student-card">
+
+            <p>
+
+                Move
+
+                <strong>{{ transfer.students }}</strong>
+
+                Students
+
+                From
+
+                <strong>{{ transfer.from_bus }}</strong>
+
+                →
+
+                <strong>{{ transfer.to_bus }}</strong>
+
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+        <h3>Final Strength</h3>
+
+        {% for bus in final_strength %}
+
+        <div class="student-card">
+
+            <p>
+
+                <strong>{{ bus.bus_number }}</strong>
+
+            </p>
+
+            <p>
+
+                Final Strength : {{ bus.strength }}
+
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+        {% elif recommendation.type == "Split Bus" %}
+
+        <h3>Recommendation</h3>
+
+        <div class="student-card">
+
+            <p>
+
+                <strong>Split Bus :</strong>
+
+                {{ recommendation.primary_bus }}
+
+            </p>
+
+        </div>
+
+        <h3>Transfer Plan</h3>
+
+        {% for transfer in transfer_plan %}
+
+        <div class="student-card">
+
+            <p>
+
+                Move
+
+                <strong>1</strong>
+
+                Student
+
+                From
+
+                <strong>{{ transfer.from_bus }}</strong>
+
+                →
+
+                <strong>{{ transfer.to_bus }}</strong>
+
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+        <h3>Final Strength</h3>
+
+        {% for bus in final_strength %}
+
+        <div class="student-card">
+
+            <p>
+
+                <strong>{{ bus.bus_number }}</strong>
+
+            </p>
+
+            <p>
+
+                Final Strength : {{ bus.strength }}
+
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+        {% else %}
+
+        <div class="student-card">
+
+            <h3>No Merge Required</h3>
+
+            <p>
+
+                All buses have sufficient student strength.
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 </body>
+
 </html>
+```

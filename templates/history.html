@@ -1,36 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Status History</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Bus Attendance History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: #2c3e50;
+            padding: 15px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 25px;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            color: #3498db;
+        }
+        .container {
+            width: 95%;
+            margin: 25px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        .search-box {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        input[type=text] {
+            padding: 10px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        tr:hover {
+            background: #eef5ff;
+        }
+        .present {
+            color: green;
+            font-weight: bold;
+        }
+        .leave {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Student Status History</h1>
-
-<table border="1">
-    <tr>
-        <th>Student ID</th>
-        <th>Status</th>
-        <th>Date</th>
-    </tr>
-
-    {% for row in history %}
-    <tr>
-        <td>{{ row[0] }}</td>
-        <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</td>
-    </tr>
-    {% endfor %}
-
-</table>
-<nav>
+<div class="navbar">
     <a href="/">Home</a>
-    <a href="/history">History</a>
+    <a href="/history">Attendance</a>
     <a href="/dashboard">Dashboard</a>
     <a href="/recommendation">Recommendation</a>
-</nav>
+</div>
 
-<br>
+<div class="container">
+    <h1>Bus Attendance History</h1>
+    <div class="search-box">
+        <form method="POST">
+            <input
+                type="text"
+                name="bus_number"
+                placeholder="Enter Bus Number"
+                required>
+            <button type="submit">
+                Search
+            </button>
+        </form>
+    </div>
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>College</th>
+            <th>Department</th>
+            <th>Year</th>
+            <th>Bus Number</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+        {% for row in history %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+            <td>
+                {% if row[6] == 'Present' %}
+                    <span class="present">Present</span>
+                {% else %}
+                    <span class="leave">{{ row[6] }}</span>
+                {% endif %}
+            </td>
+            <td>{{ row[7] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
 </body>
 </html>
