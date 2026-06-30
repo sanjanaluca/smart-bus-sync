@@ -1,127 +1,77 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
+
     <title>Bus Dashboard</title>
 
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}">
-
-<style>
-
-    body{
-        font-family: Arial, sans-serif;
-        background:#f4f6f9;
-        margin:0;
-        padding:0;
-    }
-
-    .navbar{
-        background:#2c3e50;
-        padding:15px;
-    }
-
-    .navbar a{
-        color:white;
-        text-decoration:none;
-        margin-right:25px;
-        font-weight:bold;
-    }
-
-    .navbar a:hover{
-        color:#3498db;
-    }
-
-    .container{
-        width:80%;
-        margin:30px auto;
-        background:white;
-        padding:25px;
-        border-radius:8px;
-        box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    h1{
-        color:#2c3e50;
-    }
-
-    input[type=text]{
-        width:300px;
-        padding:10px;
-        border:1px solid #ccc;
-        border-radius:5px;
-    }
-
-    button{
-        background:#3498db;
-        color:white;
-        border:none;
-        padding:10px 20px;
-        border-radius:5px;
-        cursor:pointer;
-    }
-
-    button:hover{
-        background:#2980b9;
-    }
-
-    .result-box{
-        margin-top:25px;
-        padding:20px;
-        border:1px solid #ddd;
-        border-radius:5px;
-        background:#fafafa;
-    }
-
-    .result-box p{
-        font-size:18px;
-    }
-
-</style>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 
 <body>
 
 <div class="navbar">
+
     <a href="/">Home</a>
     <a href="/history">Attendance</a>
     <a href="/dashboard">Dashboard</a>
     <a href="/recommendation">Recommendation</a>
+
 </div>
 
 <div class="container">
 
-<h1>Bus Dashboard</h1>
+    <h1>Bus Dashboard</h1>
 
-<form method="POST">
+    <div class="search-box">
 
-    <input
-        type="text"
-        name="bus_number"
-        placeholder="Enter Bus Number"
-        required>
+        <form method="POST">
 
-    <button type="submit">
-        Search
-    </button>
+            <input
+                type="text"
+                name="bus_number"
+                placeholder="Enter Bus Number"
+                required>
 
-</form>
+            <button type="submit">
 
-{% if bus_number %}
+                Search
 
-<div class="result-box">
+            </button>
 
-    <p><strong>Bus Number :</strong> {{ bus_number }}</p>
+        </form>
 
-    <p><strong>Today's Strength :</strong> {{ strength }}</p>
+    </div>
 
-</div>
+    {% if strength is not none %}
 
-{% endif %}
+    <div class="dashboard-grid">
+
+        <div class="card">
+
+            <h3> Bus Number</h3>
+
+            <p>{{ bus_number }}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3> Today's Strength</h3>
+
+            <p>{{ strength }} Students</p>
+
+        </div>
+
+    </div>
+
+    {% endif %}
 
 </div>
 
 </body>
+
 </html>
+

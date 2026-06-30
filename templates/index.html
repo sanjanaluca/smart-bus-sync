@@ -8,186 +8,68 @@
 <link rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}">
 
-<style>
-
-    body{
-        font-family: Arial, sans-serif;
-        background:#f4f6f9;
-        margin:0;
-        padding:0;
-    }
-
-    .navbar{
-        background:#2c3e50;
-        padding:15px;
-    }
-
-    .navbar a{
-        color:white;
-        text-decoration:none;
-        margin-right:25px;
-        font-weight:bold;
-    }
-
-    .navbar a:hover{
-        color:#3498db;
-    }
-
-    .container{
-        width:80%;
-        margin:30px auto;
-        background:white;
-        padding:25px;
-        border-radius:8px;
-        box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    h1{
-        color:#2c3e50;
-        margin-bottom:20px;
-    }
-
-    input[type=text]{
-        width:300px;
-        padding:10px;
-        border:1px solid #ccc;
-        border-radius:5px;
-    }
-
-    .search-btn{
-        background:#3498db;
-        color:white;
-        padding:10px 20px;
-        border:none;
-        border-radius:5px;
-        cursor:pointer;
-    }
-
-    .search-btn:hover{
-        background:#2980b9;
-    }
-
-    .action-btn{
-        background:#3498db;
-        color:white;
-        padding:10px 20px;
-        border:none;
-        border-radius:5px;
-        cursor:pointer;
-        margin-right:10px;
-        margin-top:10px;
-    }
-
-    .action-btn:hover{
-        background:#2980b9;
-    }
-
-    table{
-        width:100%;
-        border-collapse:collapse;
-        margin-top:20px;
-    }
-
-    th{
-        background:#34495e;
-        color:white;
-        padding:10px;
-        text-align:left;
-    }
-
-    td{
-        padding:10px;
-        border:1px solid #ddd;
-    }
-
-    .message{
-        margin-top:15px;
-        color:green;
-        font-weight:bold;
-    }
-
-</style>
-
 </head>
 
 <body>
 
+
 <div class="navbar">
+
     <a href="/">Home</a>
     <a href="/history">Attendance</a>
     <a href="/dashboard">Dashboard</a>
-    <a href="/recommandation">Recommendation</a>
+    <a href="/recommendation">Recommendation</a>
+
 </div>
 
 <div class="container">
 
-<h1>Student Search</h1>
+    <h1>Smart Bus Sync System</h1>
 
-<form method="POST">
+    <div class="search-box">
 
-    <input
-        type="text"
-        name="student_id"
-        placeholder="Enter Student ID"
-        required>
+        <form method="POST">
 
-    <button
-        type="submit"
-        name="action"
-        value="search"
-        class="search-btn">
-        Search
-    </button>
+            <input
+                type="text"
+                name="student_id"
+                placeholder="Enter Student ID"
+                required>
 
-</form>
+            <button
+                type="submit"
+                name="action"
+                value="search">
 
-{% if student %}
+                Search
 
-<h2>Student Details</h2>
+            </button>
 
-<table>
+        </form>
 
-    <tr>
-        <th>Field</th>
-        <th>Value</th>
-    </tr>
+    </div>
 
-    <tr>
-        <td>ID Number</td>
-        <td>{{ student[0] }}</td>
-    </tr>
+    {% if student %}
 
-    <tr>
-        <td>Student Name</td>
-        <td>{{ student[1] }}</td>
-    </tr>
+    <div class="card">
 
-    <tr>
-        <td>College</td>
-        <td>{{ student[2] }}</td>
-    </tr>
+        <h3>Student Details</h3>
 
-    <tr>
-        <td>Department</td>
-        <td>{{ student[3] }}</td>
-    </tr>
+        <p><strong>ID Number :</strong> {{ student[0] }}</p>
 
-    <tr>
-        <td>Year</td>
-        <td>{{ student[4] }}</td>
-    </tr>
+        <p><strong>Name :</strong> {{ student[1] }}</p>
 
-    <tr>
-        <td>Bus Number</td>
-        <td>{{ student[5] }}</td>
-    </tr>
+        <p><strong>College :</strong> {{ student[2] }}</p>
 
-    <tr>
-        <td>Stop Name</td>
-        <td>{{ student[6] }}</td>
-    </tr>
+        <p><strong>Department :</strong> {{ student[3] }}</p>
 
-</table>
+        <p><strong>Year :</strong> {{ student[4] }}</p>
+
+        <p><strong>Bus Number :</strong> {{ student[5] }}</p>
+
+        <p><strong>Stop :</strong> {{ student[6] }}</p>
+
+        <br>
 
 <form method="POST">
 
@@ -196,52 +78,71 @@
         name="student_id"
         value="{{ student[0] }}">
 
+    <button
+        type="submit"
+        name="action"
+        value="save"
+        onclick="document.getElementById('status').value='Present'">
+
+         Present
+
+    </button>
+
+    <button
+        type="submit"
+        name="action"
+        value="save"
+        onclick="document.getElementById('status').value='Absent'">
+
+         Absent
+
+    </button>
+
+    <button
+        type="submit"
+        name="action"
+        value="save"
+        onclick="document.getElementById('status').value='Study Leave'">
+
+         Study Leave
+
+    </button>
+
+    <button
+        type="submit"
+        name="action"
+        value="save"
+        onclick="document.getElementById('status').value='Semester Leave'">
+
+         Semester Leave
+
+    </button>
+
     <input
         type="hidden"
-        name="action"
-        value="save">
-
-    <button
-        type="submit"
-        name="status"
-        value="Present"
-        class="action-btn">
-        Present
-    </button>
-
-    <button
-        type="submit"
-        name="status"
-        value="Absent"
-        class="action-btn">
-        Absent
-    </button>
-
-    <button
-        type="submit"
-        name="status"
-        value="Study Leave"
-        class="action-btn">
-        Study Leave
-    </button>
-
-    <button
-        type="submit"
-        name="status"
-        value="Study Holiday"
-        class="action-btn">
-        Study Holiday
-    </button>
+        id="status"
+        name="status">
 
 </form>
 
-{% endif %}
+    </div>
 
-{% if message %}
-    <p class="message">{{ message }}</p>
-{% endif %}
+    {% endif %}
+
+    {% if message %}
+
+    <div class="card">
+
+        <p class="success">
+
+            {{ message }}
+
+        </p>
+
+    </div>
+
+    {% endif %}
 
 </div>
-
 </body>
 </html>
